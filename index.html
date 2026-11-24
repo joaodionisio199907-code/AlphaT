@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="es" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALPHA TRADE — Institutional Multi-Chain Liquidity & Market Intelligence</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Editorial Financial Fonts: Space Grotesk, Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Space Grotesk', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        abyssal: '#030712',
+                        obsidian: '#070E1D',
+                        surface: '#0B1324',
+                        hairline: '#162238',
+                        electric: '#00D2D3',
+                        royal: '#0A3D7A',
+                        amber: '#F59E0B',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-abyssal: #030712;
+            --bg-obsidian: #070E1D;
+            --border-hairline: #162238;
+            --accent-electric: #00D2D3;
+            --accent-amber: #F59E0B;
+        }
+
+        body {
+            background-color: var(--bg-abyssal);
+            color: #E2E8F0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .font-editorial {
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.025em;
+        }
+
+        /* Swiss Precision Hairline Borders & Architectural Surfaces */
+        .swiss-panel {
+            background: rgba(7, 14, 29, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-hairline);
+        }
+
+        .swiss-card {
+            background: #070E1D;
+            border: 1px solid #162238;
+            transition: border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .swiss-card:hover {
+            border-color: rgba(0, 210, 211, 0.45);
+        }
+
+        /* Continuous Infinite Marquee Ticker */
+        @keyframes marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: max-content;
+            animation: marquee-scroll 42s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+
+        /* SVG Logo Stroke & Reveal Animation */
+        @keyframes draw-stroke {
+            0% { stroke-dashoffset: 320; opacity: 0.2; }
+            100% { stroke-dashoffset: 0; opacity: 1; }
+        }
+        @keyframes node-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.35); opacity: 0.75; }
+        }
+        .logo-line-draw {
+            stroke-dasharray: 320;
+            stroke-dashoffset: 0;
+            animation: draw-stroke 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .logo-node-glow {
+            transform-origin: center;
+            transform-box: fill-box;
+            animation: node-pulse 3s infinite ease-in-out;
+        }
+
+        /* Scroll Reveal Mechanics */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #1E293B; }
+        ::-webkit-scrollbar-thumb:hover { background: #00D2D3; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Print / Export Whitepaper Clean Styles */
+        @media print {
+            body * { visibility: hidden; }
+            #whitepaper-printable, #whitepaper-printable * {
+                visibility: visible;
+                color: #0F172A !important;
+                background: #FFFFFF !important;
+            }
+            #whitepaper-printable {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-electric selection:text-abyssal">
+
+    <!-- Subtle Quantitative Liquidity Mesh Canvas Background -->
+    <canvas id="liquidity-mesh-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-45"></canvas>
+
+    <!-- Institutional Toast Stack -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
+
+    <!-- Top Continuous Institutional Ticker Tape -->
+    <div class="relative z-30 bg-[#02050C] border-b border-hairline text-[11px] font-mono py-2 overflow-hidden">
+        <div class="flex items-center">
+            <div class="shrink-0 px-3 sm:px-4 bg-[#02050C] z-10 border-r border-hairline flex items-center gap-2 text-electric font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-electric animate-ping"></span>
+                <span>FEED DIRECTO</span>
+            </div>
+            <div class="overflow-hidden flex-1">
+                <div class="animate-marquee gap-8 items-center" id="continuous-ticker-track">
+                    <!-- Populated dynamically with live prices + duplicated for seamless loop -->
+                </div>
+            </div>
+            <div class="hidden md:flex shrink-0 px-4 bg-[#02050C] z-10 border-l border-hairline items-center gap-3 text-slate-400">
+                <span>SYNC: <strong id="sync-countdown" class="text-amber">45s</strong></span>
+                <button onclick="forceGlobalSync()" class="hover:text-electric transition-colors cursor-pointer" title="Sincronizar Oráculos">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="global-sync-icon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Swiss Institutional Header -->
+    <header class="sticky top-0 z-40 swiss-panel border-b border-hairline">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Precision Animated Vector Logo -->
+                <a href="#" class="flex items-center gap-3.5 group focus:outline-none">
+                    <div class="w-12 h-12 rounded-lg bg-white p-1.5 shadow-sm border border-slate-200/80 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105">
+                        <svg viewBox="0 0 120 110" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="alphaNavy" x1="15" y1="95" x2="65" y2="15" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#041E42"/>
+                                    <stop offset="100%" stop-color="#0A3D7A"/>
+                                </linearGradient>
+                                <linearGradient id="alphaElectric" x1="15" y1="90" x2="105" y2="15" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#0077B6"/>
+                                    <stop offset="55%" stop-color="#00B4D8"/>
+                                    <stop offset="100%" stop-color="#00D2D3"/>
+                                </linearGradient>
+                                <linearGradient id="alphaAmberLine" x1="25" y1="95" x2="96" y2="55" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#0096C7"/>
+                                    <stop offset="45%" stop-color="#F59E0B"/>
+                                    <stop offset="100%" stop-color="#D97706"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Geometric Structural 'A' Left & Apex -->
+                            <path d="M14 95 L53 16 L67 16 L77 35 L66 45 L58 31 L30 86 C26 92 20 95 14 95 Z" fill="url(#alphaNavy)"/>
+                            <!-- Geometric Structural 'A' Right Pillar -->
+                            <path d="M77 67 L89 56 L108 95 L93 95 C88 95 84 92 81 86 L73 71 Z" fill="url(#alphaNavy)"/>
+                            <path d="M84 61 L89 56 L108 95 L98 95 Z" fill="#0096C7" opacity="0.6"/>
+                            <!-- Piercing Electric Cyan Upward Arrow -->
+                            <path d="M21 88 L47 50 L62 63 L91 31 L82 23 L111 15 L105 44 L97 37 L63 75 L48 62 L27 92 Z" fill="url(#alphaElectric)"/>
+                            <!-- Animated Ascending Line with 3 Amber/Cyan Nodes -->
+                            <path class="logo-line-draw" d="M31 95 L47 81 L59 88 L77 77 L96 55" stroke="url(#alphaAmberLine)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle class="logo-node-glow" cx="47" cy="81" r="3.8" fill="#00B4D8"/>
+                            <circle class="logo-node-glow" style="animation-delay: 0.6s" cx="59" cy="88" r="4.2" fill="#F59E0B"/>
+                            <circle class="logo-node-glow" style="animation-delay: 1.2s" cx="96" cy="55" r="4.6" fill="#F59E0B"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-baseline text-xl sm:text-2xl tracking-tight leading-none font-editorial">
+                            <span class="font-bold text-white">ALPHA</span>
+                            <span class="font-medium text-electric ml-1.5">TRADE</span>
+                        </div>
+                        <span class="block text-[9px] font-mono tracking-[0.24em] text-slate-400 uppercase mt-1">
+                            Institutional Liquidity & Stock Terminal
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Desktop Architectural Navigation -->
+                <nav class="hidden xl:flex items-center gap-1">
+                    <a href="#terminal" class="px-3.5 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 hover:text-electric transition-colors">Terminal & Mercados</a>
+                    <a href="#multichain" class="px-3.5 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 hover:text-electric transition-colors">Indexador Multi-Chain</a>
+                    <a href="#inteligencia" class="px-3.5 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 hover:text-electric transition-colors">Noticias En Vivo</a>
+                    <a href="#token-alpha" class="px-3.5 py-2 text-xs font-semibold uppercase tracking-wider text-amber hover:text-amber/80 transition-colors">Token $ALPHA</a>
+                    <a href="#roadmap" class="px-3.5 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 hover:text-electric transition-colors">Roadmap</a>
+                    <a href="#whitepaper" class="px-3.5 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 hover:text-electric transition-colors flex items-center gap-1.5">
+                        <i data-lucide="book-open" class="w-3.5 h-3.5 text-electric"></i> Libro Blanco
+                    </a>
+                </nav>
+
+                <!-- Institutional Auth & Exclusive OTC Action (Hidden until Logged In) -->
+                <div class="flex items-center gap-2.5">
+                    <!-- EXCLUSIVE LOGGED-IN ONLY BUTTON -->
+                    <button id="exclusive-otc-btn" onclick="openOtcDrawer()" class="hidden items-center gap-2 px-3.5 py-2 rounded-lg bg-amber/15 border border-amber/60 text-amber hover:bg-amber hover:text-abyssal text-xs font-mono font-bold transition-all cursor-pointer">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Orden Directa OTC</span>
+                        <span class="sm:hidden">OTC</span>
+                    </button>
+
+                    <!-- Connect Wallet / Client Login Button -->
+                    <button id="auth-toggle-btn" onclick="toggleInstitutionalAuth()" class="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-obsidian hover:bg-surface border border-electric/60 text-white text-xs font-mono font-semibold transition-all cursor-pointer">
+                        <span id="auth-status-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
+                        <span id="auth-btn-label">Acceso Cliente / Wallet</span>
+                    </button>
+
+                    <!-- Mobile Menu Trigger -->
+                    <button onclick="toggleMobileNav()" class="xl:hidden p-2.5 rounded-lg bg-obsidian border border-hairline text-slate-300 hover:text-electric">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Navigation -->
+        <div id="mobile-nav-drawer" class="hidden xl:hidden border-t border-hairline bg-abyssal/98 px-4 py-4 space-y-1.5">
+            <a href="#terminal" onclick="toggleMobileNav()" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-200 hover:bg-obsidian">01. Terminal & Mercados Globales</a>
+            <a href="#multichain" onclick="toggleMobileNav()" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-200 hover:bg-obsidian">02. Explorador Multi-Chain (Todas las Redes)</a>
+            <a href="#inteligencia" onclick="toggleMobileNav()" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-200 hover:bg-obsidian">03. Inteligencia & Noticias por Activo</a>
+            <a href="#token-alpha" onclick="toggleMobileNav()" class="block px-3 py-2.5 rounded-lg text-sm font-semibold text-amber hover:bg-obsidian">04. Ecosistema Token $ALPHA</a>
+            <a href="#roadmap" onclick="toggleMobileNav()" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-200 hover:bg-obsidian">05. Roadmap Arquitectónico (2025–2027)</a>
+            <a href="#whitepaper" onclick="toggleMobileNav()" class="block px-3 py-2.5 rounded-lg text-sm font-semibold text-electric hover:bg-obsidian">06. Libro Blanco Técnico (Whitepaper)</a>
+        </div>
+    </header>
+
+    <!-- Main Architectural Content -->
+    <main class="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+
+        <!-- HERO SECTION: Swiss Private Banking & Quantitative Trading Aesthetic -->
+        <section class="swiss-panel rounded-2xl p-6 sm:p-10 lg:p-12 relative overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex items-center gap-2.5 px-3 py-1 rounded border border-hairline bg-abyssal/90 text-[11px] font-mono uppercase tracking-widest text-electric">
+                        <span class="w-1.5 h-1.5 rounded-full bg-electric"></span>
+                        Infraestructura Bursátil & Liquidez On-Chain v4.2
+                    </div>
+                    <h1 class="text-3xl sm:text-5xl lg:text-[54px] font-bold text-white leading-[1.08] tracking-tight">
+                        Ejecución institucional y telemetría en <span class="text-electric">todas las redes</span> blockchain.
+                    </h1>
+                    <p class="text-slate-400 text-sm sm:text-base max-w-2xl leading-relaxed font-normal">
+                        ALPHA TRADE unifica libros de órdenes bursátiles, agregación de liquidez descentralizada (DEX) en más de 45 redes y oráculos de noticias en tiempo real bajo una arquitectura resistente a MEV respaldada por el protocolo <strong>$ALPHA</strong>.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-3 pt-1">
+                        <a href="#terminal" class="px-5 py-3 rounded-lg bg-electric hover:bg-cyan-300 text-abyssal font-mono font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                            Abrir Terminal en Vivo <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#whitepaper" class="px-5 py-3 rounded-lg bg-abyssal hover:bg-surface border border-hairline hover:border-electric/50 text-white font-mono font-semibold text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                            <i data-lucide="file-text" class="w-4 h-4 text-electric"></i> Leer Libro Blanco
+                        </a>
+                        <a href="#roadmap" class="px-5 py-3 rounded-lg bg-abyssal hover:bg-surface border border-hairline text-slate-300 font-mono font-semibold text-xs uppercase tracking-wider transition-all">
+                            Roadmap 2025–2027
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Quantitative Telemetry Grid -->
+                <div class="lg:col-span-5 grid grid-cols-2 gap-px bg-hairline border border-hairline rounded-xl overflow-hidden">
+                    <div class="bg-obsidian p-5 space-y-1.5">
+                        <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block">Volumen Agregado 24h</span>
+                        <div class="text-2xl sm:text-3xl font-mono font-bold text-white">$4.82B</div>
+                        <span class="text-xs font-mono text-emerald-400 flex items-center gap-1">
+                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i> +18.4% vs ayer
+                        </span>
+                    </div>
+                    <div class="bg-obsidian p-5 space-y-1.5">
+                        <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block">Cotización $ALPHA</span>
+                        <div class="text-2xl sm:text-3xl font-mono font-bold text-electric" id="hero-alpha-quote">$1.4820</div>
+                        <span class="text-xs font-mono text-amber flex items-center gap-1">
+                            APY Staking: 24.50%
+                        </span>
+                    </div>
+                    <div class="bg-obsidian p-5 space-y-1.5">
+                        <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block">Latencia Oráculo</span>
+                        <div class="text-2xl sm:text-3xl font-mono font-bold text-white">14<span class="text-base text-slate-400">ms</span></div>
+                        <span class="text-xs font-mono text-slate-400">Multi-RPC Redundante</span>
+                    </div>
+                    <div class="bg-obsidian p-5 space-y-1.5">
+                        <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block">Redes Conectadas</span>
+                        <div class="text-2xl sm:text-3xl font-mono font-bold text-white">48</div>
+                        <span class="text-xs font-mono text-electric">EVM • SVM • Move • TON</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: INSTITUTIONAL MARKET TERMINAL & ASSET INSPECTOR -->
+        <section id="terminal" class="reveal-on-scroll space-y-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-hairline pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-widest text-electric block mb-1">01 // Terminal de Mercado Global</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Cotizaciones Globales & Análisis Técnico</h2>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+                    <span class="px-2.5 py-1 rounded bg-obsidian border border-hairline flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        Oráculos: CoinGecko + DexScreener
+                    </span>
+                </div>
+            </div>
+
+            <!-- Active Selected Asset Workstation -->
+            <div class="swiss-panel rounded-2xl p-5 sm:p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <!-- Left Metrics & Execution Panel -->
+                    <div class="lg:col-span-5 space-y-5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3.5">
+                                <img id="active-coin-logo" src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png" onerror="this.src='https://placehold.co/48x48/070E1D/00D2D3?text=AT'" alt="Activo" class="w-11 h-11 rounded-lg bg-abyssal p-1 border border-hairline">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h3 id="active-coin-title" class="text-xl font-bold text-white">Bitcoin</h3>
+                                        <span id="active-coin-ticker" class="px-2 py-0.5 text-xs font-mono font-bold bg-royal/40 border border-electric/30 text-electric rounded">BTC</span>
+                                    </div>
+                                    <span id="active-coin-network" class="text-xs font-mono text-slate-400">Red Principal • Liquidez Global</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-baseline gap-3 border-y border-hairline py-3.5">
+                            <span id="active-coin-price" class="text-3xl sm:text-4xl font-mono font-bold text-white">$94,250.00</span>
+                            <span id="active-coin-delta" class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">+3.42%</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 font-mono text-xs">
+                            <div class="bg-abyssal border border-hairline p-3 rounded-lg">
+                                <span class="text-slate-500 block text-[11px]">CAP. MERCADO</span>
+                                <span id="active-coin-mcap" class="text-white font-semibold text-sm mt-0.5 block">$1.86T</span>
+                            </div>
+                            <div class="bg-abyssal border border-hairline p-3 rounded-lg">
+                                <span class="text-slate-500 block text-[11px]">VOLUMEN 24H</span>
+                                <span id="active-coin-vol" class="text-white font-semibold text-sm mt-0.5 block">$48.20B</span>
+                            </div>
+                        </div>
+
+                        <!-- Quick Trade Order Ticket -->
+                        <div class="bg-abyssal border border-hairline rounded-xl p-3.5 space-y-2.5">
+                            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+                                <span>EJECUCIÓN INSTANTÁNEA (MEV-SHIELD)</span>
+                                <span class="text-electric">Slippage: 0.1%</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="number" id="quick-order-usd" value="1000" min="10" class="w-full bg-obsidian border border-hairline rounded-lg px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-electric" placeholder="Monto USD">
+                                <button onclick="executeQuickTrade('BUY')" class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-abyssal font-mono font-bold text-xs uppercase cursor-pointer transition-colors">Comprar</button>
+                                <button onclick="executeQuickTrade('SELL')" class="px-4 py-2 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-400 font-mono font-bold text-xs uppercase cursor-pointer transition-colors">Vender</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Interactive Technical Chart -->
+                    <div class="lg:col-span-7 bg-abyssal border border-hairline rounded-xl p-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                            <div class="flex items-center gap-2 text-xs font-mono">
+                                <span class="text-slate-400">Indicadores:</span>
+                                <span class="px-2 py-0.5 rounded bg-electric/10 text-electric border border-electric/30">EMA-20</span>
+                                <span class="px-2 py-0.5 rounded bg-amber/10 text-amber border border-amber/30">VWAP</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-xs font-mono">
+                                <button onclick="switchChartStyle('line')" id="btn-chart-line" class="px-2.5 py-1 rounded bg-electric text-abyssal font-bold cursor-pointer">Área</button>
+                                <button onclick="switchChartStyle('bar')" id="btn-chart-bar" class="px-2.5 py-1 rounded bg-obsidian text-slate-400 hover:text-white cursor-pointer">Volumen / Barras</button>
+                            </div>
+                        </div>
+                        <div class="h-60 sm:h-68">
+                            <canvas id="mainAssetChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Institutional Watchlist Table -->
+            <div class="swiss-panel rounded-2xl overflow-hidden">
+                <div class="p-4 border-b border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-obsidian/60">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-xs font-mono uppercase tracking-wider font-bold text-white">Libro de Activos Globales</span>
+                        <span id="watchlist-badge" class="text-[11px] font-mono px-2 py-0.5 rounded bg-abyssal border border-hairline text-electric">15 instrumentos</span>
+                    </div>
+                    <div class="relative w-full sm:w-72">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="global-table-filter" onkeyup="filterGlobalTable()" placeholder="Filtrar activo (ej. ALPHA, ETH, SOL)..." class="w-full bg-abyssal border border-hairline rounded-lg pl-9 pr-3 py-1.5 text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-electric">
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-hairline text-[10px] font-mono uppercase tracking-wider text-slate-400 bg-abyssal/80">
+                                <th class="py-3 px-4">Rango</th>
+                                <th class="py-3 px-4">Instrumento</th>
+                                <th class="py-3 px-4 text-right">Último Precio</th>
+                                <th class="py-3 px-4 text-right">Var. 24h</th>
+                                <th class="py-3 px-4 text-right hidden md:table-cell">Volumen 24h</th>
+                                <th class="py-3 px-4 text-right hidden lg:table-cell">Cap. Mercado</th>
+                                <th class="py-3 px-4 text-right">Terminal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="global-markets-tbody" class="divide-y divide-hairline/70 text-xs sm:text-sm font-mono">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: MULTI-CHAIN UNIVERSAL TOKEN INDEXER (ALL BLOCKCHAINS) -->
+        <section id="multichain" class="reveal-on-scroll space-y-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-hairline pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-widest text-electric block mb-1">02 // Agregador de Liquidez On-Chain</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Indexador Universal de Tokens en Todas las Redes</h2>
+                </div>
+                <span class="text-xs font-mono text-slate-400">Conexión directa a pools DEX en tiempo real</span>
+            </div>
+
+            <div class="swiss-panel rounded-2xl p-5 sm:p-6 space-y-5">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-1">
+                        <i data-lucide="cpu" class="w-4 h-4 text-electric absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="multichain-query-input" placeholder="Buscar token, par DEX o pegar dirección de contrato (0x... / Base58 Solana)..." class="w-full bg-abyssal border border-hairline focus:border-electric rounded-lg pl-10 pr-4 py-3 text-xs sm:text-sm font-mono text-white placeholder-slate-500 focus:outline-none">
+                    </div>
+                    <button onclick="executeDexSearch()" class="px-6 py-3 rounded-lg bg-electric hover:bg-cyan-300 text-abyssal font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shrink-0 cursor-pointer transition-colors">
+                        <i data-lucide="radar" class="w-4 h-4"></i> Escanear Redes
+                    </button>
+                </div>
+
+                <!-- Network Selector Bar -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar" id="network-selector-bar">
+                    <button onclick="filterByNetwork('all', this)" class="net-btn px-3 py-1.5 rounded text-xs font-mono font-bold bg-electric text-abyssal shrink-0 cursor-pointer">TODAS (48)</button>
+                    <button onclick="filterByNetwork('solana', this)" class="net-btn px-3 py-1.5 rounded text-xs font-mono bg-abyssal border border-hairline text-slate-300 hover:border-electric shrink-0 cursor-pointer">SOLANA</button>
+                    <button onclick="filterByNetwork('ethereum', this)" class="net-btn px-3 py-1.5 rounded text-xs font-mono bg-abyssal border border-hairline text-slate-300 hover:border-electric shrink-0 cursor-pointer">ETHEREUM</button>
+                    <button onclick="filterByNetwork('bsc', this)" class="net-btn px-3 py-1.5 rounded text-xs font-mono bg-abyssal border border-hairline text-slate-300 hover:border-electric shrink-0 cursor-pointer">BNB CHAIN</button>
+                    <button onclick="filterByNetwork('base', this)" class="net-btn px-3 py-1.5 rounded text-xs font-mono bg-abyssal border border-hairline text-slate-300 hover:border-electric shrink-0 cursor-pointer">BASE</button>
+                    <button onclick="filterByNetwork('arbitrum', this)" class="net-btn px-3 py-1.5 rounded text-xs font-mono bg-abyssal border border-hairline text-slate-300 hover:border-electric shrink-0 cursor-pointer">ARBITRUM</button>
+                    <button onclick="filterByNetwork('polygon', this)" class="net-btn px-3 py-1.5 rounded text-xs font-mono bg-abyssal border border-hairline text-slate-300 hover:border-electric shrink-0 cursor-pointer">POLYGON</button>
+                    <button onclick="filterByNetwork('avalanche', this)" class="net-btn px-3 py-1.5 rounded text-xs font-mono bg-abyssal border border-hairline text-slate-300 hover:border-electric shrink-0 cursor-pointer">AVALANCHE</button>
+                    <button onclick="filterByNetwork('ton', this)" class="net-btn px-3 py-1.5 rounded text-xs font-mono bg-abyssal border border-hairline text-slate-300 hover:border-electric shrink-0 cursor-pointer">TON</button>
+                    <button onclick="filterByNetwork('sui', this)" class="net-btn px-3 py-1.5 rounded text-xs font-mono bg-abyssal border border-hairline text-slate-300 hover:border-electric shrink-0 cursor-pointer">SUI</button>
+                </div>
+
+                <!-- DEX Pairs Grid -->
+                <div id="multichain-pairs-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Populated via DexScreener API -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: AUTO-UPDATING NEWS INTELLIGENCE LINKED TO ACTIVE ASSET -->
+        <section id="inteligencia" class="reveal-on-scroll space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-hairline pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-widest text-amber block mb-1">03 // Oráculo de Inteligencia & Prensa Financiera</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white flex flex-wrap items-center gap-2.5">
+                        Cable de Noticias Vinculado:
+                        <span id="news-active-tag" class="px-3 py-0.5 rounded bg-obsidian border border-electric/50 text-electric font-mono text-base">
+                            Bitcoin (BTC)
+                        </span>
+                    </h2>
+                </div>
+                <div class="flex items-center gap-2 font-mono text-xs">
+                    <button onclick="loadNewsForSymbol('ALL', true)" class="px-3 py-2 rounded-lg bg-obsidian border border-hairline hover:border-slate-500 text-slate-300 cursor-pointer">Cable Global</button>
+                    <button onclick="loadNewsForSymbol(activeSymbol, true)" class="px-3 py-2 rounded-lg bg-electric/10 border border-electric/40 text-electric hover:bg-electric/20 flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Sincronizar
+                    </button>
+                </div>
+            </div>
+
+            <div id="linked-news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Populated dynamically from CryptoCompare News API -->
+            </div>
+        </section>
+
+        <!-- SECTION 4: OFFICIAL NATIVE TOKEN DASHBOARD - ALPHA TRADE ($ALPHA) -->
+        <section id="token-alpha" class="reveal-on-scroll space-y-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-hairline pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-widest text-amber block mb-1">04 // Activo Nativo del Protocolo</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Ecosistema Token ALPHA TRADE ($ALPHA)</h2>
+                </div>
+                <div class="flex items-center gap-2 font-mono text-xs">
+                    <span class="px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">Auditoría CertiK & Halborn Verificada</span>
+                </div>
+            </div>
+
+            <div class="swiss-panel rounded-2xl p-6 sm:p-8 space-y-8">
+                <!-- Contract & Key Metrics Header -->
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-hairline">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-white p-2 shrink-0">
+                            <svg viewBox="0 0 120 110" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 95 L53 16 L67 16 L77 35 L66 45 L58 31 L30 86 C26 92 20 95 14 95 Z" fill="#041E42"/>
+                                <path d="M77 67 L89 56 L108 95 L93 95 C88 95 84 92 81 86 L73 71 Z" fill="#041E42"/>
+                                <path d="M21 88 L47 50 L62 63 L91 31 L82 23 L111 15 L105 44 L97 37 L63 75 L48 62 L27 92 Z" fill="#00D2D3"/>
+                                <path d="M31 95 L47 81 L59 88 L77 77 L96 55" stroke="#F59E0B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="47" cy="81" r="4" fill="#00B4D8"/>
+                                <circle cx="59" cy="88" r="4.5" fill="#F59E0B"/>
+                                <circle cx="96" cy="55" r="4.5" fill="#F59E0B"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <h3 class="text-xl sm:text-2xl font-bold text-white">ALPHA TRADE Token</h3>
+                                <span class="px-2.5 py-0.5 rounded bg-amber/15 border border-amber/50 text-amber font-mono font-bold text-xs">$ALPHA</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-400 mt-1">Gobernanza institucional, reparto de comisiones de enrutamiento (Real-Yield) y descuentos en ejecución OTC.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-abyssal border border-hairline rounded-xl p-3.5">
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-1">Contrato Canónico Multi-Chain (ERC-20 / BEP-20 / Base)</span>
+                        <div class="flex items-center gap-2">
+                            <code id="canonical-alpha-contract" class="text-xs font-mono text-electric bg-obsidian px-3 py-1.5 rounded border border-hairline">0x7A9F4c82E10B93d5A4C18e6F2026ALPHA889</code>
+                            <button onclick="copyString('0x7A9F4c82E10B93d5A4C18e6F2026ALPHA889', 'Contrato $ALPHA copiado')" class="p-2 rounded bg-electric hover:bg-cyan-300 text-abyssal transition-colors cursor-pointer" title="Copiar dirección">
+                                <i data-lucide="copy" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Token Dashboard Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Left 7 Cols: Performance Chart & Tokenomics -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono">
+                            <div class="bg-abyssal border border-hairline p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 block">PRECIO SPOT</span>
+                                <span class="text-lg font-bold text-white mt-0.5 block">$1.4820</span>
+                                <span class="text-[11px] text-emerald-400">+14.82% (24h)</span>
+                            </div>
+                            <div class="bg-abyssal border border-hairline p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 block">MARKET CAP</span>
+                                <span class="text-lg font-bold text-white mt-0.5 block">$148.20M</span>
+                                <span class="text-[11px] text-slate-400">100M Circulante</span>
+                            </div>
+                            <div class="bg-abyssal border border-hairline p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 block">LIQUIDEZ BLOQUEADA</span>
+                                <span class="text-lg font-bold text-electric mt-0.5 block">$38.45M</span>
+                                <span class="text-[11px] text-slate-400">Lock 36 Meses</span>
+                            </div>
+                            <div class="bg-abyssal border border-hairline p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 block">QUEMA ACUMULADA</span>
+                                <span class="text-lg font-bold text-amber mt-0.5 block">4.12M</span>
+                                <span class="text-[11px] text-slate-400">Deflación Activa</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-abyssal border border-hairline rounded-xl p-4">
+                            <div class="flex items-center justify-between mb-3 text-xs font-mono">
+                                <span class="text-white font-semibold">Curva Institucional ALPHA / USDT</span>
+                                <span class="text-electric">Rango 90 Días</span>
+                            </div>
+                            <div class="h-56">
+                                <canvas id="alphaNativeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right 5 Cols: Swap Terminal & Tiered Institutional Staking Calculator -->
+                    <div class="lg:col-span-5 space-y-5">
+                        <!-- Swap Terminal -->
+                        <div class="bg-abyssal border border-hairline rounded-xl p-5 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-mono font-bold uppercase tracking-wider text-white">Terminal Swap $ALPHA</span>
+                                <select id="alpha-swap-chain" class="bg-obsidian border border-hairline text-xs font-mono text-electric rounded px-2.5 py-1 focus:outline-none">
+                                    <option value="Ethereum">Ethereum Mainnet</option>
+                                    <option value="Solana">Solana SPL</option>
+                                    <option value="Base">Base L2</option>
+                                    <option value="Arbitrum">Arbitrum One</option>
+                                </select>
+                            </div>
+                            <div class="space-y-2.5 font-mono">
+                                <div class="bg-obsidian border border-hairline rounded-lg p-3">
+                                    <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                                        <span>ENTREGAS</span>
+                                        <span>USDT / USDC</span>
+                                    </div>
+                                    <input type="number" id="alpha-pay-usdt" value="1000" min="1" oninput="recalcAlphaSwap()" class="w-full bg-transparent text-lg font-bold text-white focus:outline-none">
+                                </div>
+                                <div class="bg-obsidian border border-hairline rounded-lg p-3">
+                                    <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                                        <span>RECIBES ESTIMADO</span>
+                                        <span class="text-electric">Tasa: $1.4820</span>
+                                    </div>
+                                    <input type="text" id="alpha-receive-tokens" value="674.76 $ALPHA" readonly class="w-full bg-transparent text-lg font-bold text-electric focus:outline-none">
+                                </div>
+                            </div>
+                            <button onclick="submitAlphaSwap()" class="w-full py-3 rounded-lg bg-electric hover:bg-cyan-300 text-abyssal font-mono font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer">
+                                Ejecutar Intercambio Instantáneo
+                            </button>
+                        </div>
+
+                        <!-- Tiered Institutional Staking Calculator -->
+                        <div class="bg-abyssal border border-amber/40 rounded-xl p-5 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-mono font-bold uppercase tracking-wider text-white">Staking Institucional (Real-Yield)</span>
+                                <span id="staking-apy-display" class="px-2 py-0.5 rounded bg-amber/15 text-amber font-mono font-bold text-xs">24.50% APY</span>
+                            </div>
+
+                            <!-- Lock Period Tier Buttons -->
+                            <div class="grid grid-cols-3 gap-2 font-mono text-xs">
+                                <button onclick="setStakingTier(30, 14.0, this)" class="tier-btn py-1.5 rounded bg-obsidian border border-hairline text-slate-300 hover:border-amber cursor-pointer">30 Días (14%)</button>
+                                <button onclick="setStakingTier(90, 19.5, this)" class="tier-btn py-1.5 rounded bg-obsidian border border-hairline text-slate-300 hover:border-amber cursor-pointer">90 Días (19.5%)</button>
+                                <button onclick="setStakingTier(365, 24.5, this)" class="tier-btn py-1.5 rounded bg-amber text-abyssal font-bold cursor-pointer">365 Días (24.5%)</button>
+                            </div>
+
+                            <div class="space-y-1.5 font-mono text-xs">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-400">Capital Bloqueado:</span>
+                                    <span class="text-white font-bold"><span id="stake-val-tokens">10,000</span> $ALPHA</span>
+                                </div>
+                                <input type="range" id="alpha-stake-range" min="500" max="100000" step="500" value="10000" oninput="recalcStakingYield()" class="w-full accent-amber cursor-pointer">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 pt-1 font-mono text-xs">
+                                <div class="bg-obsidian border border-hairline p-2.5 rounded-lg">
+                                    <span class="text-[10px] text-slate-400 block">RENDIMIENTO PERÍODO</span>
+                                    <span id="yield-period-tokens" class="text-emerald-400 font-bold text-sm mt-0.5 block">+2,450.00 ALPHA</span>
+                                </div>
+                                <div class="bg-obsidian border border-hairline p-2.5 rounded-lg">
+                                    <span class="text-[10px] text-slate-400 block">VALOR ESTIMADO USD</span>
+                                    <span id="yield-period-usd" class="text-amber font-bold text-sm mt-0.5 block">$3,630.90 USD</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: ARCHITECTURAL INTERACTIVE ROADMAP (2025 - 2027) -->
+        <section id="roadmap" class="reveal-on-scroll space-y-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-hairline pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-widest text-electric block mb-1">05 // Planificación Estratégica & Despliegue</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Roadmap Arquitectónico (2025 – 2027)</h2>
+                </div>
+                <!-- Quarter / Phase Filters -->
+                <div class="flex flex-wrap items-center gap-1.5 font-mono text-xs">
+                    <button onclick="filterRoadmap('all', this)" class="rm-filter px-3 py-1.5 rounded bg-electric text-abyssal font-bold cursor-pointer">Todas las Fases</button>
+                    <button onclick="filterRoadmap('completed', this)" class="rm-filter px-3 py-1.5 rounded bg-obsidian border border-hairline text-slate-300 hover:border-electric cursor-pointer">Completadas</button>
+                    <button onclick="filterRoadmap('active', this)" class="rm-filter px-3 py-1.5 rounded bg-obsidian border border-hairline text-slate-300 hover:border-electric cursor-pointer">En Ejecución</button>
+                    <button onclick="filterRoadmap('upcoming', this)" class="rm-filter px-3 py-1.5 rounded bg-obsidian border border-hairline text-slate-300 hover:border-electric cursor-pointer">Próximos Hitos</button>
+                </div>
+            </div>
+
+            <!-- Overall Progress Telemetry -->
+            <div class="swiss-panel rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="px-2.5 py-1 rounded bg-electric/15 border border-electric/40 text-electric font-mono font-bold text-xs">Q4 2026</span>
+                    <span class="text-xs sm:text-sm text-slate-300">Progreso global de despliegue de protocolo ALPHA TRADE: <strong class="text-white font-mono">68% Completado</strong></span>
+                </div>
+                <div class="w-full sm:w-64 bg-abyssal border border-hairline rounded-full h-2.5 overflow-hidden">
+                    <div class="bg-gradient-to-r from-electric to-amber h-full rounded-full" style="width: 68%"></div>
+                </div>
+            </div>
+
+            <!-- Timeline Grid -->
+            <div id="roadmap-timeline-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                <!-- Phase I -->
+                <div class="roadmap-card swiss-card rounded-2xl p-5 flex flex-col justify-between space-y-5" data-status="completed">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between font-mono text-xs">
+                            <span class="text-slate-400">Q1 – Q4 2025</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold">100% COMPLETADO</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Fase I: Infraestructura Core & Agregador Multi-Chain</h3>
+                        <ul class="space-y-2.5 text-xs text-slate-300">
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+                                <span>Despliegue de nodos RPC dedicados en Ethereum, Solana, BSC, Base y Arbitrum.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+                                <span>Motor de indexación unificada de pools DEX y libros de órdenes spot.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+                                <span>Auditoría formal de contratos inteligentes por CertiK y Halborn.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pt-3 border-t border-hairline font-mono text-[11px] text-emerald-400 flex justify-between">
+                        <span>Hito Verificado On-Chain</span>
+                        <span>v1.0 – v2.4</span>
+                    </div>
+                </div>
+
+                <!-- Phase II -->
+                <div class="roadmap-card swiss-card rounded-2xl p-5 flex flex-col justify-between space-y-5" data-status="completed">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between font-mono text-xs">
+                            <span class="text-slate-400">Q1 – Q2 2026</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold">100% COMPLETADO</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Fase II: Motor de Inteligencia & Enrutamiento MEV-Resistant</h3>
+                        <ul class="space-y-2.5 text-xs text-slate-300">
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+                                <span>Oráculo de noticias financieras vinculadas en tiempo real por ticker y contrato.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+                                <span>Algoritmo AlphaRouter v3 con protección anti-sandwich y optimización de gas.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+                                <span>Expansión de soporte nativo a redes TON, Sui y Avalanche C-Chain.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pt-3 border-t border-hairline font-mono text-[11px] text-emerald-400 flex justify-between">
+                        <span>Hito Verificado On-Chain</span>
+                        <span>v3.0 – v3.8</span>
+                    </div>
+                </div>
+
+                <!-- Phase III (Active) -->
+                <div class="roadmap-card swiss-card rounded-2xl p-5 flex flex-col justify-between space-y-5 border-electric/60" data-status="active">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between font-mono text-xs">
+                            <span class="text-electric font-bold">Q3 – Q4 2026</span>
+                            <span class="px-2 py-0.5 rounded bg-electric/15 text-electric border border-electric/40 font-bold">75% EN CURSO</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Fase III: Liquidez Institucional, Staking & Gobernanza $ALPHA</h3>
+                        <ul class="space-y-2.5 text-xs text-slate-300">
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+                                <span>Activación de bóvedas de Staking Real-Yield con distribución automática de comisiones.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="loader" class="w-4 h-4 text-electric animate-spin shrink-0 mt-0.5"></i>
+                                <span>Mesa OTC Institucional sin deslizamiento para bloques superiores a $250,000 USD.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="circle-dot" class="w-4 h-4 text-amber shrink-0 mt-0.5"></i>
+                                <span>Portal de Gobernanza DAO para votación de listados y parámetros de quema.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pt-3 border-t border-hairline font-mono text-[11px] text-electric flex justify-between">
+                        <span>Despliegue Activo</span>
+                        <span>v4.2 Live</span>
+                    </div>
+                </div>
+
+                <!-- Phase IV (Upcoming) -->
+                <div class="roadmap-card swiss-card rounded-2xl p-5 flex flex-col justify-between space-y-5" data-status="upcoming">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between font-mono text-xs">
+                            <span class="text-slate-400">Q1 – Q4 2027</span>
+                            <span class="px-2 py-0.5 rounded bg-amber/15 text-amber border border-amber/30 font-bold">PROGRAMADO</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Fase IV: Derivados Cross-Chain & API Institucional</h3>
+                        <ul class="space-y-2.5 text-xs text-slate-300">
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="arrow-right-circle" class="w-4 h-4 text-amber shrink-0 mt-0.5"></i>
+                                <span>Contratos perpetuos cross-chain con margen unificado colateralizado en $ALPHA.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="arrow-right-circle" class="w-4 h-4 text-amber shrink-0 mt-0.5"></i>
+                                <span>Conectividad FIX API y WebSockets de baja latencia para fondos cuantitativos.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="arrow-right-circle" class="w-4 h-4 text-amber shrink-0 mt-0.5"></i>
+                                <span>Liquidación híbrida de activos RWA (bonos del Tesoro tokenizados y acciones).</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pt-3 border-t border-hairline font-mono text-[11px] text-slate-400 flex justify-between">
+                        <span>Arquitectura en Diseño</span>
+                        <span>v5.0 Spec</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: INTERACTIVE TECHNICAL WHITEPAPER (LIBRO BLANCO COMPLETO) -->
+        <section id="whitepaper" class="reveal-on-scroll space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-hairline pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-widest text-electric block mb-1">06 // Documentación Técnica & Especificación Protocolaria</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Libro Blanco (Whitepaper Institucional v4.2)</h2>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <button onclick="downloadWhitepaperClean()" class="px-4 py-2.5 rounded-lg bg-electric hover:bg-cyan-300 text-abyssal font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer transition-colors">
+                        <i data-lucide="download" class="w-4 h-4"></i> Descargar / Imprimir Whitepaper
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive Whitepaper Document Viewer -->
+            <div class="swiss-panel rounded-2xl overflow-hidden">
+                <!-- Top Reading Progress Bar -->
+                <div class="w-full bg-abyssal h-1.5 border-b border-hairline">
+                    <div id="wp-reading-progress" class="bg-gradient-to-r from-electric to-amber h-full transition-all duration-200" style="width: 20%"></div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12">
+                    <!-- Left Sticky Table of Contents -->
+                    <aside class="lg:col-span-4 border-b lg:border-b-0 lg:border-r border-hairline bg-abyssal/60 p-5 space-y-4">
+                        <div class="font-mono text-[11px] uppercase tracking-widest text-slate-400">Índice de Capítulos</div>
+                        <nav class="space-y-1.5" id="wp-chapter-nav">
+                            <button onclick="selectWhitepaperChapter(0)" class="wp-nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-mono font-bold bg-electric/15 border border-electric/50 text-electric transition-all cursor-pointer">
+                                01. Resumen Ejecutivo y Tesis de Mercado
+                            </button>
+                            <button onclick="selectWhitepaperChapter(1)" class="wp-nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-mono text-slate-300 hover:bg-obsidian border border-transparent transition-all cursor-pointer">
+                                02. Arquitectura de Enrutamiento Cross-Chain
+                            </button>
+                            <button onclick="selectWhitepaperChapter(2)" class="wp-nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-mono text-slate-300 hover:bg-obsidian border border-transparent transition-all cursor-pointer">
+                                03. Motor de Inteligencia y Oráculos de Noticias
+                            </button>
+                            <button onclick="selectWhitepaperChapter(3)" class="wp-nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-mono text-slate-300 hover:bg-obsidian border border-transparent transition-all cursor-pointer">
+                                04. Tokenomics y Mecánica Deflacionaria ($ALPHA)
+                            </button>
+                            <button onclick="selectWhitepaperChapter(4)" class="wp-nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-mono text-slate-300 hover:bg-obsidian border border-transparent transition-all cursor-pointer">
+                                05. Seguridad, Auditorías y Gobernanza DAO
+                            </button>
+                        </nav>
+
+                        <div class="pt-4 border-t border-hairline font-mono text-[11px] text-slate-400 space-y-1.5">
+                            <div class="flex justify-between"><span>Versión Documento:</span><span class="text-white">4.2.0-FINAL</span></div>
+                            <div class="flex justify-between"><span>Hash SHA-256:</span><span class="text-electric">9f84c2...e10a</span></div>
+                            <div class="flex justify-between"><span>Clasificación:</span><span class="text-amber">Público / Institucional</span></div>
+                        </div>
+                    </aside>
+
+                    <!-- Right Document Reader Pane -->
+                    <div id="whitepaper-printable" onscroll="updateWhitepaperScrollProgress()" class="lg:col-span-8 p-6 sm:p-8 lg:p-10 max-h-[680px] overflow-y-auto space-y-6">
+                        <!-- Dynamic Chapter Content Injected Here -->
+                        <div id="wp-chapter-content"></div>
+
+                        <!-- Bottom Chapter Pagination Controls -->
+                        <div class="pt-6 border-t border-hairline flex items-center justify-between font-mono text-xs">
+                            <button id="wp-prev-btn" onclick="navigateWhitepaper(-1)" class="px-4 py-2 rounded-lg bg-abyssal border border-hairline text-slate-300 hover:border-electric disabled:opacity-30 cursor-pointer">
+                                ← Capítulo Anterior
+                            </button>
+                            <span id="wp-page-indicator" class="text-slate-400">Capítulo 1 de 5</span>
+                            <button id="wp-next-btn" onclick="navigateWhitepaper(1)" class="px-4 py-2 rounded-lg bg-electric text-abyssal font-bold hover:bg-cyan-300 disabled:opacity-30 cursor-pointer">
+                                Siguiente Capítulo →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- EXCLUSIVE LOGGED-IN OTC INSTITUTIONAL MODAL DRAWER -->
+    <div id="otc-modal" class="hidden fixed inset-0 z-50 bg-abyssal/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="swiss-panel rounded-2xl max-w-lg w-full p-6 space-y-5 border-amber/60">
+            <div class="flex items-center justify-between border-b border-hairline pb-3">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-amber"></i>
+                    <h3 class="font-bold text-white text-lg">Mesa Institucional OTC — ALPHA TRADE</h3>
+                </div>
+                <button onclick="closeOtcDrawer()" class="text-slate-400 hover:text-white cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Ejecución directa fuera de libro público (Dark Pool Multi-Chain) sin impacto en precio ni deslizamiento. Disponible exclusivamente para cuentas institucionales autenticadas.
+            </p>
+            <div class="space-y-3 font-mono text-xs">
+                <div>
+                    <label class="text-slate-400 block mb-1">PAR INSTITUCIONAL</label>
+                    <select class="w-full bg-abyssal border border-hairline rounded-lg px-3 py-2.5 text-white">
+                        <option>ALPHA / USDC (Bloque Institucional)</option>
+                        <option>BTC / USDT (Liquidación Directa)</option>
+                        <option>ETH / USDC (Liquidación Directa)</option>
+                        <option>SOL / USDC (Liquidación Directa)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-slate-400 block mb-1">VOLUMEN DE BLOQUE (MÍN. $50,000 USD)</label>
+                    <input type="number" id="otc-block-amount" value="250000" min="50000" class="w-full bg-abyssal border border-hairline rounded-lg px-3 py-2.5 text-white">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeOtcDrawer()" class="px-4 py-2 rounded-lg bg-abyssal border border-hairline text-xs font-mono text-slate-300 cursor-pointer">Cancelar</button>
+                <button onclick="submitOtcBlock()" class="px-5 py-2 rounded-lg bg-amber hover:bg-amber/90 text-abyssal font-mono font-bold text-xs uppercase cursor-pointer">Solicitar Cotización Firme RFQ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Institutional Footer -->
+    <footer class="relative z-10 border-t border-hairline bg-[#02050C] mt-16 py-10">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-white p-1">
+                    <svg viewBox="0 0 120 110" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14 95 L53 16 L67 16 L77 35 L66 45 L58 31 L30 86 C26 92 20 95 14 95 Z" fill="#041E42"/>
+                        <path d="M77 67 L89 56 L108 95 L93 95 C88 95 84 92 81 86 L73 71 Z" fill="#041E42"/>
+                        <path d="M21 88 L47 50 L62 63 L91 31 L82 23 L111 15 L105 44 L97 37 L63 75 L48 62 L27 92 Z" fill="#00D2D3"/>
+                        <path d="M31 95 L47 81 L59 88 L77 77 L96 55" stroke="#F59E0B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <span class="font-editorial font-bold text-white tracking-tight">ALPHA <span class="text-electric">TRADE</span></span>
+                    <span class="block text-[11px] font-mono text-slate-500">Zürich • New York • Decentralized Multi-Chain Protocol</span>
+                </div>
+            </div>
+            <div class="text-[11px] font-mono text-slate-500 text-center md:text-right">
+                <p>Telemetría conectada a CoinGecko, DexScreener & CryptoCompare Intelligence.</p>
+                <p class="mt-1">© 2026 ALPHA TRADE Protocol ($ALPHA). Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Core Institutional Engine & Whitepaper Data -->
+    <script>
+        // =========================================================================
+        // 1. STATE & INSTITUTIONAL DATA REPOSITORY
+        // =========================================================================
+        const ALPHA_SPOT_PRICE = 1.4820;
+        let activeSymbol = 'BTC';
+        let activeAssetName = 'Bitcoin';
+        let activeNetworkFilter = 'all';
+        let activeChartType = 'line';
+        let currentStakingApy = 24.5;
+        let currentStakingDays = 365;
+        let currentWpChapter = 0;
+        let isInstitutionalAuthenticated = false;
+        let syncTimer = 45;
+
+        let marketAssets = [];
+        let dexPairsCache = [];
+        let mainChart = null;
+        let alphaChart = null;
+
+        const RESILIENT_MARKETS = [
+            { id: 'alpha-trade', name: 'ALPHA TRADE', symbol: 'alpha', current_price: 1.4820, price_change_percentage_24h: 14.82, total_volume: 42850000, market_cap: 148200000, image: 'https://placehold.co/48x48/070E1D/00D2D3?text=A', network: 'Multi-Chain (ETH/SOL/BSC/Base)', sparkline_in_7d: { price: [1.14, 1.19, 1.23, 1.21, 1.29, 1.36, 1.42, 1.482] } },
+            { id: 'bitcoin', name: 'Bitcoin', symbol: 'btc', current_price: 94250.00, price_change_percentage_24h: 3.42, total_volume: 48200000000, market_cap: 1865000000000, image: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png', network: 'Bitcoin Mainnet', sparkline_in_7d: { price: [89800, 90900, 91400, 92100, 93000, 93750, 94250] } },
+            { id: 'ethereum', name: 'Ethereum', symbol: 'eth', current_price: 3420.50, price_change_percentage_24h: 4.18, total_volume: 24100000000, market_cap: 412000000000, image: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png', network: 'Ethereum L1', sparkline_in_7d: { price: [3205, 3240, 3285, 3330, 3315, 3380, 3420.5] } },
+            { id: 'solana', name: 'Solana', symbol: 'sol', current_price: 218.40, price_change_percentage_24h: 7.65, total_volume: 9850000000, market_cap: 103400000000, image: 'https://assets.coingecko.com/coins/images/4128/large/solana.png', network: 'Solana SVM', sparkline_in_7d: { price: [194, 200, 198, 205, 211, 215, 218.4] } },
+            { id: 'binancecoin', name: 'BNB', symbol: 'bnb', current_price: 645.20, price_change_percentage_24h: 1.92, total_volume: 2150000000, market_cap: 94100000000, image: 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png', network: 'BNB Smart Chain', sparkline_in_7d: { price: [626, 631, 634, 630, 638, 641, 645.2] } },
+            { id: 'ripple', name: 'XRP', symbol: 'xrp', current_price: 1.42, price_change_percentage_24h: 9.15, total_volume: 6400000000, market_cap: 81000000000, image: 'https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png', network: 'XRP Ledger', sparkline_in_7d: { price: [1.20, 1.24, 1.29, 1.28, 1.34, 1.38, 1.42] } },
+            { id: 'sui', name: 'Sui', symbol: 'sui', current_price: 3.65, price_change_percentage_24h: 11.40, total_volume: 1850000000, market_cap: 10400000000, image: 'https://assets.coingecko.com/coins/images/26375/large/sui-ocean-square.png', network: 'Sui Move', sparkline_in_7d: { price: [3.08, 3.20, 3.28, 3.27, 3.44, 3.56, 3.65] } },
+            { id: 'the-open-network', name: 'Toncoin', symbol: 'ton', current_price: 5.84, price_change_percentage_24h: 2.75, total_volume: 490000000, market_cap: 14800000000, image: 'https://assets.coingecko.com/coins/images/17980/large/ton_symbol.png', network: 'TON Blockchain', sparkline_in_7d: { price: [5.52, 5.58, 5.66, 5.71, 5.74, 5.80, 5.84] } },
+            { id: 'avalanche-2', name: 'Avalanche', symbol: 'avax', current_price: 42.80, price_change_percentage_24h: -1.45, total_volume: 980000000, market_cap: 17500000000, image: 'https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png', network: 'Avalanche C-Chain', sparkline_in_7d: { price: [44.2, 43.8, 43.4, 43.7, 43.1, 42.9, 42.8] } },
+            { id: 'chainlink', name: 'Chainlink', symbol: 'link', current_price: 18.90, price_change_percentage_24h: 5.10, total_volume: 760000000, market_cap: 11800000000, image: 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png', network: 'Multi-Chain Oracle', sparkline_in_7d: { price: [17.3, 17.7, 18.0, 17.9, 18.3, 18.6, 18.9] } }
+        ];
+
+        const RESILIENT_DEX_PAIRS = [
+            { chainId: 'ethereum', baseToken: { name: 'ALPHA TRADE', symbol: 'ALPHA', address: '0x7A9F4c82E10B93d5A4C18e6F2026ALPHA889' }, quoteToken: { symbol: 'USDT' }, priceUsd: '1.4820', priceChange: { h24: 14.82 }, volume: { h24: 24400000 }, liquidity: { usd: 19850000 } },
+            { chainId: 'solana', baseToken: { name: 'ALPHA TRADE', symbol: 'ALPHA', address: 'ALPHa89xTrAdE992SolanaSPLToken2026v1' }, quoteToken: { symbol: 'SOL' }, priceUsd: '1.4820', priceChange: { h24: 14.82 }, volume: { h24: 18450000 }, liquidity: { usd: 18600000 } },
+            { chainId: 'base', baseToken: { name: 'Aerodrome Finance', symbol: 'AERO', address: '0x940181a94A35A4569E4529A3CDfB74e38FD98631' }, quoteToken: { symbol: 'USDC' }, priceUsd: '1.62', priceChange: { h24: 12.30 }, volume: { h24: 52300000 }, liquidity: { usd: 41200000 } },
+            { chainId: 'solana', baseToken: { name: 'Jupiter Aggregator', symbol: 'JUP', address: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN' }, quoteToken: { symbol: 'USDC' }, priceUsd: '1.14', priceChange: { h24: 6.45 }, volume: { h24: 84200000 }, liquidity: { usd: 24100000 } },
+            { chainId: 'arbitrum', baseToken: { name: 'Arbitrum', symbol: 'ARB', address: '0x912CE59144191C1204E64559FE8253a0e49E6548' }, quoteToken: { symbol: 'ETH' }, priceUsd: '0.94', priceChange: { h24: 4.12 }, volume: { h24: 112000000 }, liquidity: { usd: 58900000 } },
+            { chainId: 'bsc', baseToken: { name: 'PancakeSwap', symbol: 'CAKE', address: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82' }, quoteToken: { symbol: 'BNB' }, priceUsd: '2.78', priceChange: { h24: 3.85 }, volume: { h24: 46700000 }, liquidity: { usd: 39500000 } }
+        ];
+
+        // =========================================================================
+        // 2. COMPLETE WHITEPAPER CHAPTERS (WITH SVG DIAGRAMS & MATH FORMULAS)
+        // =========================================================================
+        const WHITEPAPER_CHAPTERS = [
+            {
+                title: 'Capítulo 01 — Resumen Ejecutivo y Tesis de Mercado',
+                subtitle: 'Convergencia de la microestructura bursátil tradicional con la liquidez fragmentada multi-chain.',
+                html: `
+                    <div class="space-y-5 text-sm text-slate-300 leading-relaxed">
+                        <p>
+                            Los mercados financieros descentralizados han alcanzado una madurez estructural sin precedentes; sin embargo, padecen una <strong class="text-white">fragmentación crítica de liquidez</strong> distribuida en más de 45 redes blockchain heterogéneas (arquitecturas EVM, Solana SVM, Move y TON). Para el capital institucional y los operadores de alta frecuencia, esta dispersión genera deslizamiento excesivo (<em>slippage</em>), latencia informativa y exposición al Valor Máximo Extraíble (MEV).
+                        </p>
+                        <p>
+                            <strong class="text-electric">ALPHA TRADE</strong> resuelve esta ineficiencia mediante una capa de ejecución unificada de grado institucional que combina: (i) enrutamiento algorítmico cross-chain en tiempo real, (ii) un oráculo de inteligencia financiera que correlaciona eventos macroeconómicos y noticias directamente con cada contrato inteligente, y (iii) un modelo económico deflacionario articulado por el token nativo <strong class="text-amber">$ALPHA</strong>.
+                        </p>
+                        <div class="bg-abyssal border border-hairline rounded-xl p-4 my-4">
+                            <div class="text-xs font-mono text-electric uppercase mb-2">Pilares Fundamentales del Protocolo</div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs">
+                                <div class="bg-obsidian p-3 rounded border border-hairline">
+                                    <span class="text-white font-bold block">01. Liquidez Unificada</span>
+                                    <span class="text-slate-400 text-[11px]">Acceso atómico a >450 pools DEX y mesas OTC sin fricción.</span>
+                                </div>
+                                <div class="bg-obsidian p-3 rounded border border-hairline">
+                                    <span class="text-white font-bold block">02. Protección MEV</span>
+                                    <span class="text-slate-400 text-[11px]">Envío privado de paquetes de transacciones resistentes a front-running.</span>
+                                </div>
+                                <div class="bg-obsidian p-3 rounded border border-hairline">
+                                    <span class="text-white font-bold block">03. Real-Yield $ALPHA</span>
+                                    <span class="text-slate-400 text-[11px]">El 65% de las comisiones del protocolo fluye a stakers y quema.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: 'Capítulo 02 — Arquitectura de Enrutamiento Cross-Chain',
+                subtitle: 'Optimización convexa de rutas multi-salto y liquidación atómica mediante AlphaRouter v4.',
+                html: `
+                    <div class="space-y-5 text-sm text-slate-300 leading-relaxed">
+                        <p>
+                            El motor <strong class="text-white">AlphaRouter v4</strong> modela el ecosistema multi-chain como un grafo dirigido ponderado $G = (V, E)$, donde los vértices $V$ representan activos en cadenas específicas y las aristas $E$ representan pools de liquidez AMM, libros de órdenes CLOB o puentes de mensajería verificada.
+                        </p>
+
+                        <!-- Mathematical Formula Box -->
+                        <div class="bg-abyssal border border-electric/30 rounded-xl p-4 font-mono text-xs space-y-2">
+                            <span class="text-slate-400 block uppercase text-[10px]">Función Objetivo de Optimización de Ejecución:</span>
+                            <div class="text-electric text-sm sm:text-base overflow-x-auto py-1">
+                                max &Sigma;<sub>i=1..k</sub> [ &Delta;y<sub>i</sub>(&Delta;x<sub>i</sub>) &minus; &lambda; &middot; Gas<sub>i</sub>(chain<sub>i</sub>) &minus; &rho; &middot; Risk<sub>MEV</sub>(i) ]
+                            </div>
+                            <span class="text-slate-400 block text-[11px]">sujeto a: &Sigma; &Delta;x<sub>i</sub> = X<sub>total</sub> , &Delta;x<sub>i</sub> &ge; 0</span>
+                        </div>
+
+                        <!-- Vector SVG Liquidity Flow Diagram -->
+                        <div class="bg-abyssal border border-hairline rounded-xl p-4">
+                            <span class="text-[11px] font-mono uppercase text-slate-400 block mb-3">Diagrama de Flujo de Liquidez Institucional (AlphaRouter v4)</span>
+                            <svg viewBox="0 0 680 170" class="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Node 1: Client Order -->
+                                <rect x="10" y="55" width="145" height="60" rx="8" fill="#070E1D" stroke="#00D2D3" stroke-width="1.5"/>
+                                <text x="82" y="82" fill="#FFFFFF" font-family="JetBrains Mono" font-size="11" font-weight="bold" text-anchor="middle">ORDEN CLIENTE</text>
+                                <text x="82" y="99" fill="#00D2D3" font-family="JetBrains Mono" font-size="9" text-anchor="middle">API / Terminal Web</text>
+
+                                <!-- Arrows 1 -> 2 -->
+                                <path d="M155 85 L225 85" stroke="#00D2D3" stroke-width="2" stroke-dasharray="4 3"/>
+                                <polygon points="225,81 233,85 225,89" fill="#00D2D3"/>
+
+                                <!-- Node 2: AlphaRouter Engine -->
+                                <rect x="235" y="35" width="190" height="100" rx="8" fill="#0A3D7A" fill-opacity="0.35" stroke="#F59E0B" stroke-width="1.5"/>
+                                <text x="330" y="65" fill="#F59E0B" font-family="JetBrains Mono" font-size="11" font-weight="bold" text-anchor="middle">ALPHAROUTER v4</text>
+                                <text x="330" y="84" fill="#E2E8F0" font-family="JetBrains Mono" font-size="9" text-anchor="middle">Partición Convexa + MEV Shield</text>
+                                <text x="330" y="102" fill="#94A3B8" font-family="JetBrains Mono" font-size="9" text-anchor="middle">Latencia: 14ms | Zero-Slippage</text>
+
+                                <!-- Arrows 2 -> 3 -->
+                                <path d="M425 60 L500 35" stroke="#00D2D3" stroke-width="1.5"/>
+                                <path d="M425 85 L500 85" stroke="#F59E0B" stroke-width="1.5"/>
+                                <path d="M425 110 L500 135" stroke="#00D2D3" stroke-width="1.5"/>
+
+                                <!-- Node 3: Multi-Chain Pools -->
+                                <rect x="505" y="15" width="160" height="36" rx="6" fill="#070E1D" stroke="#162238"/>
+                                <text x="585" y="37" fill="#FFFFFF" font-family="JetBrains Mono" font-size="10" text-anchor="middle">EVM (ETH / Base / ARB)</text>
+
+                                <rect x="505" y="67" width="160" height="36" rx="6" fill="#070E1D" stroke="#F59E0B" stroke-opacity="0.6"/>
+                                <text x="585" y="89" fill="#F59E0B" font-family="JetBrains Mono" font-size="10" text-anchor="middle">Solana SVM / Raydium</text>
+
+                                <rect x="505" y="119" width="160" height="36" rx="6" fill="#070E1D" stroke="#162238"/>
+                                <text x="585" y="141" fill="#FFFFFF" font-family="JetBrains Mono" font-size="10" text-anchor="middle">OTC Dark Pool Institucional</text>
+                            </svg>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: 'Capítulo 03 — Motor de Inteligencia y Oráculos de Noticias',
+                subtitle: 'Indexación semántica en tiempo real vinculada a identificadores de contrato y activos.',
+                html: `
+                    <div class="space-y-5 text-sm text-slate-300 leading-relaxed">
+                        <p>
+                            En los mercados electrónicos modernos, la asimetría temporal entre la publicación de un evento fundamental y su impacto en el libro de órdenes determina el alfa generado por una mesa de operaciones. ALPHA TRADE integra un pipeline de procesamiento de lenguaje natural (NLP) que ingiere flujos de agencias financieras, registros regulatorios y telemetría on-chain cada 45 segundos.
+                        </p>
+                        <p>
+                            Cada noticia es etiquetada determinísticamente mediante un índice compuesto <code class="text-electric font-mono">[ChainID : ContractAddress : Ticker]</code>, permitiendo que al inspeccionar cualquier token en nuestra terminal, el operador visualice exclusivamente las noticias y alertas de liquidez que afectan directamente a dicho activo.
+                        </p>
+                        <div class="bg-abyssal border border-hairline rounded-xl p-4 space-y-2 font-mono text-xs">
+                            <span class="text-amber font-bold block">Pipeline de Verificación de Señales:</span>
+                            <p class="text-slate-400">1. Ingesta multi-fuente (CryptoCompare, Bloomberg Crypto Wire, Eventos On-Chain).</p>
+                            <p class="text-slate-400">2. Deduplicación criptográfica y filtrado de ruido promocional.</p>
+                            <p class="text-slate-400">3. Vinculación automática con el gráfico de precios y liquidez DEX en la interfaz.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: 'Capítulo 04 — Tokenomics y Mecánica Deflacionaria ($ALPHA)',
+                subtitle: 'Estructura de suministro fijo, captura de valor Real-Yield y quema algorítmica.',
+                html: `
+                    <div class="space-y-5 text-sm text-slate-300 leading-relaxed">
+                        <p>
+                            El token <strong class="text-amber">$ALPHA</strong> posee un suministro máximo estrictamente limitado a <strong class="text-white font-mono">250,000,000 ALPHA</strong> sin capacidad de emisión adicional (<em>hard-capped</em>). Su diseño económico alinea los incentivos entre proveedores de liquidez, operadores institucionales y titulares a largo plazo.
+                        </p>
+
+                        <div class="bg-abyssal border border-amber/30 rounded-xl p-4 font-mono text-xs space-y-2">
+                            <span class="text-slate-400 block uppercase text-[10px]">Ecuación de Quema Trimestral (Buyback & Burn):</span>
+                            <div class="text-amber text-sm py-1">
+                                B<sub>t</sub> = 0.25 &middot; &Sigma; Fees<sub>protocolo</sub>(t) &nbsp;&nbsp;|&nbsp;&nbsp; Supply<sub>t+1</sub> = Supply<sub>t</sub> &minus; (B<sub>t</sub> / P<sub>ALPHA</sub>)
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border border-hairline font-mono text-xs">
+                                <thead class="bg-abyssal text-slate-400">
+                                    <tr>
+                                        <th class="p-2.5 border-b border-hairline">Asignación</th>
+                                        <th class="p-2.5 border-b border-hairline">%</th>
+                                        <th class="p-2.5 border-b border-hairline">Tokens ($ALPHA)</th>
+                                        <th class="p-2.5 border-b border-hairline">Calendario Vesting</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-hairline">
+                                    <tr><td class="p-2.5 text-white">Liquidez Multi-Chain</td><td class="p-2.5 text-electric">40%</td><td class="p-2.5">100,000,000</td><td class="p-2.5 text-slate-400">Bloqueada 36 meses</td></tr>
+                                    <tr><td class="p-2.5 text-white">Staking Real-Yield</td><td class="p-2.5 text-amber">30%</td><td class="p-2.5">75,000,000</td><td class="p-2.5 text-slate-400">Emisión lineal 48 meses</td></tr>
+                                    <tr><td class="p-2.5 text-white">Tesorería Institucional</td><td class="p-2.5 text-blue-400">20%</td><td class="p-2.5">50,000,000</td><td class="p-2.5 text-slate-400">Cliff 12m + 36m lineal</td></tr>
+                                    <tr><td class="p-2.5 text-white">Reserva Quema & Desarrollo</td><td class="p-2.5 text-emerald-400">10%</td><td class="p-2.5">25,000,000</td><td class="p-2.5 text-slate-400">Gobernanza Multi-Sig</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: 'Capítulo 05 — Seguridad, Auditorías y Gobernanza DAO',
+                subtitle: 'Custodia no-custodial, verificación formal de contratos y control descentralizado.',
+                html: `
+                    <div class="space-y-5 text-sm text-slate-300 leading-relaxed">
+                        <p>
+                            ALPHA TRADE opera bajo un modelo <strong class="text-white">100% no-custodial</strong>: el protocolo nunca retiene claves privadas ni fondos de los usuarios fuera de los contratos inteligentes auditados de staking y enrutamiento atómico.
+                        </p>
+                        <ul class="space-y-2.5 text-xs font-mono text-slate-300 bg-abyssal border border-hairline rounded-xl p-4">
+                            <li><strong class="text-electric">[AUD-01]</strong> Auditoría integral de seguridad y pruebas de estrés completada por <strong>CertiK</strong> (Puntuación: 98.4/100).</li>
+                            <li><strong class="text-electric">[AUD-02]</strong> Verificación formal de invariantes matemáticos de enrutamiento cross-chain por <strong>Halborn Security</strong>.</li>
+                            <li><strong class="text-electric">[BUG-BOUNTY]</strong> Programa permanente de recompensas en Immunefi dotado con hasta <strong>$2,000,000 USD</strong> para vulnerabilidades críticas.</li>
+                            <li><strong class="text-amber">[DAO-GOV]</strong> Los titulares con staking activo de $ALPHA gobiernan los parámetros de comisiones, incorporación de nuevas blockchains y asignación de tesorería mediante votación cuadrática ponderada por tiempo de bloqueo.</li>
+                        </ul>
+                    </div>
+                `
+            }
+        ];
+
+        // =========================================================================
+        // 3. INITIALIZATION & SUBTLE QUANTITATIVE MESH CANVAS
+        // =========================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initQuantitativeMeshCanvas();
+            initScrollRevealObserver();
+            initCharts();
+            selectWhitepaperChapter(0);
+
+            // Live API Hydration
+            loadGlobalMarkets();
+            loadDexMultiChainPairs('SOL');
+            loadNewsForSymbol('BTC', false);
+            startSyncClock();
+
+            document.getElementById('multichain-query-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') executeDexSearch();
+            });
+        });
+
+        function initQuantitativeMeshCanvas() {
+            const canvas = document.getElementById('liquidity-mesh-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height, nodes = [];
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                const count = Math.min(48, Math.floor((width * height) / 28000));
+                nodes = Array.from({ length: count }, () => ({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * 0.28,
+                    vy: (Math.random() - 0.5) * 0.28,
+                    r: Math.random() * 1.5 + 0.8
+                }));
+            }
+
+            window.addEventListener('resize', resize);
+            resize();
+
+            function draw() {
+                ctx.clearRect(0, 0, width, height);
+                for (let i = 0; i < nodes.length; i++) {
+                    const n1 = nodes[i];
+                    n1.x += n1.vx;
+                    n1.y += n1.vy;
+                    if (n1.x < 0 || n1.x > width) n1.vx *= -1;
+                    if (n1.y < 0 || n1.y > height) n1.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(n1.x, n1.y, n1.r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0, 210, 211, 0.35)';
+                    ctx.fill();
+
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const n2 = nodes[j];
+                        const dist = Math.hypot(n1.x - n2.x, n1.y - n2.y);
+                        if (dist < 145) {
+                            ctx.beginPath();
+                            ctx.moveTo(n1.x, n1.y);
+                            ctx.lineTo(n2.x, n2.y);
+                            ctx.strokeStyle = `rgba(22, 34, 56, ${1 - dist / 145})`;
+                            ctx.lineWidth = 0.8;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function initScrollRevealObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.08 });
+
+            document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+        }
+
+        // =========================================================================
+        // 4. INSTITUTIONAL AUTHENTICATION & EXCLUSIVE OTC BUTTON RULE
+        // =========================================================================
+        function toggleInstitutionalAuth() {
+            isInstitutionalAuthenticated = !isInstitutionalAuthenticated;
+            const otcBtn = document.getElementById('exclusive-otc-btn');
+            const authLabel = document.getElementById('auth-btn-label');
+            const authDot = document.getElementById('auth-status-dot');
+
+            if (isInstitutionalAuthenticated) {
+                // Reveal exclusive logged-in button
+                otcBtn.classList.remove('hidden');
+                otcBtn.classList.add('flex');
+                authLabel.textContent = '0x84F...92E1 (Institucional)';
+                authDot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-ping';
+                notifyToast('Sesión Institucional Activa', 'Acceso habilitado a Mesa OTC Directa y Terminal Web3.', 'electric');
+            } else {
+                // Hide exclusive button when logged out
+                otcBtn.classList.add('hidden');
+                otcBtn.classList.remove('flex');
+                authLabel.textContent = 'Acceso Cliente / Wallet';
+                authDot.className = 'w-2 h-2 rounded-full bg-slate-500';
+                notifyToast('Sesión Cerrada', 'Se ha desconectado la credencial institucional.', 'amber');
+            }
+        }
+
+        function openOtcDrawer() {
+            document.getElementById('otc-modal').classList.remove('hidden');
+        }
+        function closeOtcDrawer() {
+            document.getElementById('otc-modal').classList.add('hidden');
+        }
+        function submitOtcBlock() {
+            const amt = document.getElementById('otc-block-amount').value;
+            closeOtcDrawer();
+            notifyToast('Solicitud RFQ Enviada', `Bloque institucional de $${Number(amt).toLocaleString()} USD enrutado a Dark Pool.`, 'electric');
+        }
+
+        // =========================================================================
+        // 5. LIVE APIS: COINGECKO MARKETS & CONTINUOUS TICKER
+        // =========================================================================
+        async function loadGlobalMarkets() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=15&page=1&sparkline=true&price_change_percentage=24h');
+                if (!response.ok) throw new Error('CoinGecko limit');
+                const data = await response.json();
+                marketAssets = [RESILIENT_MARKETS[0], ...data.map(item => ({ ...item, network: 'Multi-Chain' }))];
+            } catch (err) {
+                marketAssets = [...RESILIENT_MARKETS];
+            }
+
+            renderContinuousTicker(marketAssets);
+            renderGlobalWatchlist(marketAssets);
+
+            const selected = marketAssets.find(a => a.symbol.toUpperCase() === activeSymbol) || marketAssets[1];
+            if (selected) inspectMarketAsset(selected);
+        }
+
+        function renderContinuousTicker(assets) {
+            const track = document.getElementById('continuous-ticker-track');
+            const itemsHtml = assets.map(a => {
+                const chg = a.price_change_percentage_24h || 0;
+                const pos = chg >= 0;
+                return `
+                    <span class="inline-flex items-center gap-2 text-slate-300">
+                        <strong class="text-white">${a.symbol.toUpperCase()}</strong>
+                        <span>${formatUsd(a.current_price)}</span>
+                        <span class="${pos ? 'text-emerald-400' : 'text-rose-400'}">${pos ? '+' : ''}${chg.toFixed(2)}%</span>
+                        <span class="text-hairline mx-2">|</span>
+                    </span>
+                `;
+            }).join('');
+            // Duplicate items for seamless infinite CSS scroll
+            track.innerHTML = itemsHtml + itemsHtml;
+        }
+
+        function renderGlobalWatchlist(assets) {
+            const tbody = document.getElementById('global-markets-tbody');
+            document.getElementById('watchlist-badge').textContent = `${assets.length} instrumentos`;
+
+            tbody.innerHTML = assets.map((asset, idx) => {
+                const chg = asset.price_change_percentage_24h || 0;
+                const pos = chg >= 0;
+                const isNative = asset.symbol.toLowerCase() === 'alpha';
+                return `
+                    <tr onclick='onSelectAssetRow(${JSON.stringify({
+                        name: asset.name,
+                        symbol: asset.symbol,
+                        current_price: asset.current_price,
+                        price_change_percentage_24h: asset.price_change_percentage_24h,
+                        market_cap: asset.market_cap,
+                        total_volume: asset.total_volume,
+                        image: asset.image,
+                        network: asset.network || 'Multi-Chain',
+                        sparkline: asset.sparkline_in_7d?.price || []
+                    }).replace(/'/g, "&#39;")})'
+                    class="hover:bg-electric/10 transition-colors cursor-pointer ${isNative ? 'bg-royal/25' : ''}">
+                        <td class="py-3.5 px-4 text-slate-500">${isNative ? '★' : idx}</td>
+                        <td class="py-3.5 px-4">
+                            <div class="flex items-center gap-3">
+                                <img src="${asset.image}" onerror="this.src='https://placehold.co/32x32/070E1D/00D2D3?text=${asset.symbol.toUpperCase()}'" class="w-7 h-7 rounded bg-abyssal border border-hairline">
+                                <div>
+                                    <div class="font-sans font-bold text-white flex items-center gap-2">
+                                        ${asset.name}
+                                        ${isNative ? '<span class="px-1.5 py-0.5 text-[9px] font-mono bg-amber text-abyssal font-bold rounded">NATIVO</span>' : ''}
+                                    </div>
+                                    <span class="text-[11px] text-slate-400 uppercase">${asset.symbol}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-3.5 px-4 text-right font-bold text-white">${formatUsd(asset.current_price)}</td>
+                        <td class="py-3.5 px-4 text-right font-semibold ${pos ? 'text-emerald-400' : 'text-rose-400'}">
+                            ${pos ? '+' : ''}${chg.toFixed(2)}%
+                        </td>
+                        <td class="py-3.5 px-4 text-right text-slate-300 hidden md:table-cell">${formatCompactUsd(asset.total_volume)}</td>
+                        <td class="py-3.5 px-4 text-right text-slate-300 hidden lg:table-cell">${formatCompactUsd(asset.market_cap)}</td>
+                        <td class="py-3.5 px-4 text-right">
+                            <span class="px-2.5 py-1 rounded bg-abyssal border border-hairline hover:border-electric text-[11px] text-electric">
+                                Inspeccionar
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterGlobalTable() {
+            const q = document.getElementById('global-table-filter').value.toLowerCase();
+            const filtered = marketAssets.filter(a => a.name.toLowerCase().includes(q) || a.symbol.toLowerCase().includes(q));
+            renderGlobalWatchlist(filtered);
+        }
+
+        function onSelectAssetRow(asset) {
+            inspectMarketAsset(asset);
+            loadNewsForSymbol(asset.symbol.toUpperCase(), true);
+            document.getElementById('terminal').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function inspectMarketAsset(asset) {
+            activeSymbol = asset.symbol.toUpperCase();
+            activeAssetName = asset.name;
+
+            document.getElementById('active-coin-logo').src = asset.image || `https://placehold.co/48x48/070E1D/00D2D3?text=${activeSymbol}`;
+            document.getElementById('active-coin-title').textContent = asset.name;
+            document.getElementById('active-coin-ticker').textContent = activeSymbol;
+            document.getElementById('active-coin-network').textContent = asset.network || 'Multi-Chain';
+            document.getElementById('active-coin-price').textContent = formatUsd(asset.current_price);
+
+            const chg = asset.price_change_percentage_24h || 0;
+            const deltaEl = document.getElementById('active-coin-delta');
+            deltaEl.textContent = `${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%`;
+            deltaEl.className = `text-xs font-mono font-bold px-2.5 py-1 rounded border ${chg >= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/10 text-rose-400 border-rose-500/30'}`;
+
+            document.getElementById('active-coin-mcap').textContent = formatCompactUsd(asset.market_cap);
+            document.getElementById('active-coin-vol').textContent = formatCompactUsd(asset.total_volume);
+            document.getElementById('news-active-tag').textContent = `${asset.name} (${activeSymbol})`;
+
+            const series = (asset.sparkline && asset.sparkline.length > 0)
+                ? asset.sparkline.slice(-24)
+                : generateSeries(asset.current_price, 24);
+            updateMainChart(series, chg >= 0);
+        }
+
+        function executeQuickTrade(side) {
+            const usd = parseFloat(document.getElementById('quick-order-usd').value) || 0;
+            if (usd <= 0) return;
+            notifyToast(
+                `Orden ${side} Ejecutada (${activeSymbol})`,
+                `Enrutada vía AlphaRouter MEV-Shield por $${usd.toLocaleString()} USD.`,
+                side === 'BUY' ? 'electric' : 'amber'
+            );
+        }
+
+        // =========================================================================
+        // 6. DEXSCREENER MULTI-CHAIN EXPLORER (ALL NETWORKS)
+        // =========================================================================
+        async function loadDexMultiChainPairs(query = 'SOL') {
+            const grid = document.getElementById('multichain-pairs-grid');
+            grid.innerHTML = `<div class="col-span-full py-10 text-center font-mono text-xs text-slate-400">Escaneando pools de liquidez on-chain...</div>`;
+
+            try {
+                const res = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${encodeURIComponent(query)}`);
+                if (!res.ok) throw new Error('DexScreener API');
+                const data = await res.json();
+                let pairs = (data.pairs || []).slice(0, 18);
+                if (query.toUpperCase().includes('ALPHA') || query === 'SOL') {
+                    pairs = [...RESILIENT_DEX_PAIRS.slice(0, 2), ...pairs];
+                }
+                dexPairsCache = pairs.length ? pairs : RESILIENT_DEX_PAIRS;
+            } catch (err) {
+                dexPairsCache = RESILIENT_DEX_PAIRS;
+            }
+
+            renderDexPairs();
+        }
+
+        function executeDexSearch() {
+            const q = document.getElementById('multichain-query-input').value.trim();
+            loadDexMultiChainPairs(q || 'ETH');
+        }
+
+        function filterByNetwork(net, btn) {
+            activeNetworkFilter = net;
+            document.querySelectorAll('.net-btn').forEach(b => {
+                b.className = 'net-btn px-3 py-1.5 rounded text-xs font-mono bg-abyssal border border-hairline text-slate-300 hover:border-electric shrink-0 cursor-pointer';
+            });
+            btn.className = 'net-btn px-3 py-1.5 rounded text-xs font-mono font-bold bg-electric text-abyssal shrink-0 cursor-pointer';
+
+            if (net !== 'all') {
+                loadDexMultiChainPairs(net);
+            } else {
+                renderDexPairs();
+            }
+        }
+
+        function renderDexPairs() {
+            const grid = document.getElementById('multichain-pairs-grid');
+            let list = dexPairsCache;
+            if (activeNetworkFilter !== 'all') {
+                list = dexPairsCache.filter(p => (p.chainId || '').toLowerCase().includes(activeNetworkFilter));
+            }
+
+            if (!list.length) {
+                grid.innerHTML = `<div class="col-span-full py-8 text-center font-mono text-xs text-slate-400">Sin pares activos en esta red para el término buscado.</div>`;
+                return;
+            }
+
+            grid.innerHTML = list.slice(0, 9).map(p => {
+                const base = p.baseToken || { name: 'Token', symbol: 'TKN', address: '0x00' };
+                const quote = p.quoteToken || { symbol: 'USD' };
+                const chg = p.priceChange?.h24 ?? 0;
+                const pos = chg >= 0;
+                const chain = (p.chainId || 'MULTI').toUpperCase();
+                const shortAddr = base.address ? `${base.address.slice(0, 6)}...${base.address.slice(-4)}` : 'N/A';
+
+                return `
+                    <div class="swiss-card rounded-xl p-4 flex flex-col justify-between gap-3.5">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="flex items-center gap-2 font-mono">
+                                    <span class="font-bold text-white text-sm">${base.symbol}</span>
+                                    <span class="text-xs text-slate-500">/ ${quote.symbol}</span>
+                                    <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-royal/40 border border-electric/30 text-electric">${chain}</span>
+                                </div>
+                                <p class="text-xs text-slate-400 truncate max-w-[190px] mt-0.5">${base.name}</p>
+                            </div>
+                            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded ${pos ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+                                ${pos ? '+' : ''}${Number(chg).toFixed(2)}%
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 bg-abyssal border border-hairline rounded-lg p-2.5 font-mono text-xs">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block">PRECIO</span>
+                                <span class="text-white font-semibold">${formatUsd(p.priceUsd)}</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block">LIQUIDEZ</span>
+                                <span class="text-slate-300">${formatCompactUsd(p.liquidity?.usd)}</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block">VOL 24H</span>
+                                <span class="text-slate-300">${formatCompactUsd(p.volume?.h24)}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1 font-mono text-[11px]">
+                            <button onclick="copyString('${base.address}', 'Contrato copiado')" class="text-slate-400 hover:text-electric flex items-center gap-1 cursor-pointer">
+                                <i data-lucide="copy" class="w-3 h-3"></i> ${shortAddr}
+                            </button>
+                            <button onclick="inspectDexAsset('${base.name.replace(/'/g, '')}', '${base.symbol}', '${p.priceUsd}', ${chg}, '${chain}')" class="text-amber hover:underline font-semibold flex items-center gap-1 cursor-pointer">
+                                Noticias & Gráfico <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function inspectDexAsset(name, symbol, price, chg, chain) {
+            inspectMarketAsset({
+                name,
+                symbol,
+                current_price: parseFloat(price) || 0.01,
+                price_change_percentage_24h: chg,
+                market_cap: 0,
+                total_volume: 0,
+                network: `${chain} DEX`,
+                image: `https://placehold.co/48x48/070E1D/00D2D3?text=${symbol.slice(0, 3)}`
+            });
+            loadNewsForSymbol(symbol, true);
+            document.getElementById('inteligencia').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // =========================================================================
+        // 7. AUTO-UPDATING NEWS FEED LINKED TO SELECTED COIN
+        // =========================================================================
+        async function loadNewsForSymbol(symbol = 'BTC', notify = false) {
+            const sym = (symbol || 'BTC').toUpperCase();
+            if (sym === 'ALL') {
+                document.getElementById('news-active-tag').textContent = 'Cable Global Multi-Chain';
+            }
+
+            try {
+                const endpoint = sym === 'ALL'
+                    ? 'https://min-api.cryptocompare.com/data/v2/news/?lang=EN'
+                    : `https://min-api.cryptocompare.com/data/v2/news/?categories=${encodeURIComponent(sym)}&lang=EN`;
+                const res = await fetch(endpoint);
+                if (!res.ok) throw new Error('News API');
+                const json = await res.json();
+                let articles = (json.Data || []).slice(0, 6);
+                if (!articles.length) articles = buildSyntheticIntelligence(sym, activeAssetName);
+                renderNewsGrid(articles, sym);
+                if (notify) notifyToast('Cable Sincronizado', `Titulares actualizados para ${sym}.`, 'electric');
+            } catch (err) {
+                renderNewsGrid(buildSyntheticIntelligence(sym, activeAssetName), sym);
+            }
+        }
+
+        function buildSyntheticIntelligence(sym, name) {
+            const ts = Math.floor(Date.now() / 1000);
+            return [
+                {
+                    title: `Flujo institucional en ${name} (${sym}) registra expansión de liquidez en pools multi-chain`,
+                    body: `Los algoritmos de enrutamiento de ALPHA TRADE detectan acumulación sostenida y reducción de spreads en pares spot y perpetuos vinculados a ${sym}.`,
+                    source: 'ALPHA Institutional Wire',
+                    published_on: ts - 600,
+                    url: '#inteligencia',
+                    imageurl: 'https://placehold.co/600x340/070E1D/00D2D3?text=ALPHA+MARKET+DESK'
+                },
+                {
+                    title: `Análisis Cuantitativo ${sym}: Niveles de soporte estructural y profundidad de libro`,
+                    body: `La telemetría on-chain refleja un incremento en carteras institucionales con custodia a largo plazo sobre ${name} (${sym}).`,
+                    source: 'Zürich Quantitative Desk',
+                    published_on: ts - 2400,
+                    url: '#inteligencia',
+                    imageurl: 'https://placehold.co/600x340/030712/F59E0B?text=QUANTITATIVE+RESEARCH'
+                },
+                {
+                    title: `Interoperabilidad Cross-Chain: ${sym} optimiza liquidación atómica entre Ethereum, Solana y Base`,
+                    body: `La integración con puentes verificados reduce la latencia de arbitraje y mejora la eficiencia de capital para operadores de ${sym}.`,
+                    source: 'DeFi Infrastructure Report',
+                    published_on: ts - 5100,
+                    url: '#inteligencia',
+                    imageurl: 'https://placehold.co/600x340/0A3D7A/00D2D3?text=CROSS-CHAIN+LIQUIDITY'
+                }
+            ];
+        }
+
+        function renderNewsGrid(articles, sym) {
+            const container = document.getElementById('linked-news-container');
+            container.innerHTML = articles.map(a => {
+                const timeStr = new Date((a.published_on || Date.now() / 1000) * 1000).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                return `
+                    <article class="swiss-card rounded-xl overflow-hidden flex flex-col justify-between group">
+                        <div>
+                            <div class="relative h-40 bg-abyssal overflow-hidden border-b border-hairline">
+                                <img src="${a.imageurl}" onerror="this.src='https://placehold.co/600x340/070E1D/00D2D3?text=ALPHA+TRADE'" alt="Noticia" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute top-3 left-3 flex items-center gap-1.5 font-mono text-[10px]">
+                                    <span class="px-2 py-0.5 rounded bg-abyssal/95 border border-electric/50 text-electric font-bold">#${sym}</span>
+                                    <span class="px-2 py-0.5 rounded bg-abyssal/90 text-slate-300">${a.source || 'Wire'}</span>
+                                </div>
+                            </div>
+                            <div class="p-4 space-y-2">
+                                <div class="text-[11px] font-mono text-slate-500 flex items-center gap-1.5">
+                                    <i data-lucide="clock" class="w-3 h-3 text-amber"></i> Actualizado • ${timeStr}
+                                </div>
+                                <h3 class="font-bold text-white text-base line-clamp-2 group-hover:text-electric transition-colors">
+                                    ${a.title}
+                                </h3>
+                                <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed">
+                                    ${a.body}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="px-4 py-3 border-t border-hairline flex items-center justify-between font-mono text-[11px]">
+                            <span class="text-slate-500">Verificado por Oráculo</span>
+                            <a href="${a.url}" target="_blank" rel="noopener noreferrer" class="text-electric hover:underline flex items-center gap-1">
+                                Leer Cable <i data-lucide="external-link" class="w-3 h-3"></i>
+                            </a>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        // =========================================================================
+        // 8. CHARTS, TOKEN $ALPHA SWAP/STAKING, ROADMAP & WHITEPAPER CONTROLS
+        // =========================================================================
+        function generateSeries(base, count = 24) {
+            const out = [];
+            let cur = base * 0.95;
+            for (let i = 0; i < count; i++) {
+                cur = Math.max(0.00001, cur + (Math.random() - 0.45) * (base * 0.018));
+                out.push(cur);
+            }
+            out[count - 1] = base;
+            return out;
+        }
+
+        function initCharts() {
+            const ctx1 = document.getElementById('mainAssetChart').getContext('2d');
+            mainChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+                    datasets: [{
+                        label: 'Cotización USD',
+                        data: generateSeries(94250, 24),
+                        borderColor: '#00D2D3',
+                        backgroundColor: 'rgba(0, 210, 211, 0.10)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(22, 34, 56, 0.35)' }, ticks: { color: '#64748B', maxTicksLimit: 6, font: { family: 'JetBrains Mono', size: 10 } } },
+                        y: { grid: { color: 'rgba(22, 34, 56, 0.45)' }, ticks: { color: '#94A3B8', font: { family: 'JetBrains Mono', size: 10 } } }
+                    }
+                }
+            });
+
+            const ctx2 = document.getElementById('alphaNativeChart').getContext('2d');
+            alphaChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'Hoy'],
+                    datasets: [{
+                        label: '$ALPHA / USDT',
+                        data: [0.68, 0.74, 0.82, 0.79, 0.91, 1.04, 1.12, 1.18, 1.26, 1.34, 1.41, 1.482],
+                        borderColor: '#F59E0B',
+                        backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#00D2D3',
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#64748B', font: { family: 'JetBrains Mono', size: 10 } } },
+                        y: { grid: { color: 'rgba(22, 34, 56, 0.45)' }, ticks: { color: '#94A3B8', font: { family: 'JetBrains Mono', size: 10 }, callback: v => '$' + v.toFixed(2) } }
+                    }
+                }
+            });
+        }
+
+        function updateMainChart(series, isPos) {
+            if (!mainChart) return;
+            mainChart.data.labels = series.map((_, i) => `T-${series.length - i}h`);
+            mainChart.data.datasets[0].data = series;
+            mainChart.data.datasets[0].borderColor = isPos ? '#00D2D3' : '#F43F5E';
+            mainChart.data.datasets[0].backgroundColor = isPos ? 'rgba(0, 210, 211, 0.10)' : 'rgba(244, 63, 94, 0.10)';
+            mainChart.update();
+        }
+
+        function switchChartStyle(type) {
+            if (!mainChart) return;
+            mainChart.config.type = type;
+            mainChart.update();
+            document.getElementById('btn-chart-line').className = type === 'line' ? 'px-2.5 py-1 rounded bg-electric text-abyssal font-bold cursor-pointer' : 'px-2.5 py-1 rounded bg-obsidian text-slate-400 hover:text-white cursor-pointer';
+            document.getElementById('btn-chart-bar').className = type === 'bar' ? 'px-2.5 py-1 rounded bg-electric text-abyssal font-bold cursor-pointer' : 'px-2.5 py-1 rounded bg-obsidian text-slate-400 hover:text-white cursor-pointer';
+        }
+
+        // Token Swap & Tiered Staking
+        function recalcAlphaSwap() {
+            const usdt = parseFloat(document.getElementById('alpha-pay-usdt').value) || 0;
+            document.getElementById('alpha-receive-tokens').value = `${(usdt / ALPHA_SPOT_PRICE).toFixed(2)} $ALPHA`;
+        }
+
+        function submitAlphaSwap() {
+            const usdt = parseFloat(document.getElementById('alpha-pay-usdt').value) || 0;
+            const chain = document.getElementById('alpha-swap-chain').value;
+            if (usdt <= 0) return;
+            notifyToast('Swap $ALPHA Confirmado', `${usdt} USDT intercambiados por ${(usdt / ALPHA_SPOT_PRICE).toFixed(2)} $ALPHA en ${chain}.`, 'electric');
+        }
+
+        function setStakingTier(days, apy, btn) {
+            currentStakingDays = days;
+            currentStakingApy = apy;
+            document.getElementById('staking-apy-display').textContent = `${apy.toFixed(2)}% APY`;
+            document.querySelectorAll('.tier-btn').forEach(b => {
+                b.className = 'tier-btn py-1.5 rounded bg-obsidian border border-hairline text-slate-300 hover:border-amber cursor-pointer';
+            });
+            btn.className = 'tier-btn py-1.5 rounded bg-amber text-abyssal font-bold cursor-pointer';
+            recalcStakingYield();
+        }
+
+        function recalcStakingYield() {
+            const amount = parseFloat(document.getElementById('alpha-stake-range').value) || 10000;
+            document.getElementById('stake-val-tokens').textContent = amount.toLocaleString('en-US');
+            const earnedTokens = amount * (currentStakingApy / 100) * (currentStakingDays / 365);
+            document.getElementById('yield-period-tokens').textContent = `+${earnedTokens.toFixed(2)} ALPHA`;
+            document.getElementById('yield-period-usd').textContent = `$${(earnedTokens * ALPHA_SPOT_PRICE).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+        }
+
+        // Roadmap Filter
+        function filterRoadmap(status, btn) {
+            document.querySelectorAll('.rm-filter').forEach(b => {
+                b.className = 'rm-filter px-3 py-1.5 rounded bg-obsidian border border-hairline text-slate-300 hover:border-electric cursor-pointer';
+            });
+            btn.className = 'rm-filter px-3 py-1.5 rounded bg-electric text-abyssal font-bold cursor-pointer';
+
+            document.querySelectorAll('.roadmap-card').forEach(card => {
+                if (status === 'all' || card.dataset.status === status) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        // Interactive Whitepaper Viewer
+        function selectWhitepaperChapter(index) {
+            currentWpChapter = index;
+            const ch = WHITEPAPER_CHAPTERS[index];
+            const container = document.getElementById('wp-chapter-content');
+            container.innerHTML = `
+                <div class="border-b border-hairline pb-4 mb-5">
+                    <h3 class="text-xl sm:text-2xl font-bold text-white">${ch.title}</h3>
+                    <p class="text-xs sm:text-sm font-mono text-electric mt-1">${ch.subtitle}</p>
+                </div>
+                ${ch.html}
+            `;
+
+            document.querySelectorAll('.wp-nav-btn').forEach((btn, idx) => {
+                btn.className = idx === index
+                    ? 'wp-nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-mono font-bold bg-electric/15 border border-electric/50 text-electric transition-all cursor-pointer'
+                    : 'wp-nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-mono text-slate-300 hover:bg-obsidian border border-transparent transition-all cursor-pointer';
+            });
+
+            document.getElementById('wp-page-indicator').textContent = `Capítulo ${index + 1} de ${WHITEPAPER_CHAPTERS.length}`;
+            document.getElementById('wp-prev-btn').disabled = index === 0;
+            document.getElementById('wp-next-btn').disabled = index === WHITEPAPER_CHAPTERS.length - 1;
+            document.getElementById('wp-reading-progress').style.width = `${((index + 1) / WHITEPAPER_CHAPTERS.length) * 100}%`;
+        }
+
+        function navigateWhitepaper(delta) {
+            const next = currentWpChapter + delta;
+            if (next >= 0 && next < WHITEPAPER_CHAPTERS.length) {
+                selectWhitepaperChapter(next);
+            }
+        }
+
+        function updateWhitepaperScrollProgress() {
+            const el = document.getElementById('whitepaper-printable');
+            const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight || 1)) * 100;
+            const basePct = ((currentWpChapter + 1) / WHITEPAPER_CHAPTERS.length) * 100;
+            document.getElementById('wp-reading-progress').style.width = `${Math.min(100, Math.max(basePct, pct))}%`;
+        }
+
+        function downloadWhitepaperClean() {
+            notifyToast('Preparando Libro Blanco', 'Abriendo vista de impresión / exportación PDF institucional.', 'electric');
+            setTimeout(() => window.print(), 400);
+        }
+
+        // =========================================================================
+        // 9. UTILITIES, CLIPBOARD & AUTO-SYNC LOOP
+        // =========================================================================
+        function formatUsd(v) {
+            const n = parseFloat(v);
+            if (isNaN(n)) return '$0.00';
+            if (n >= 1) return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+            return '$' + n.toFixed(6);
+        }
+
+        function formatCompactUsd(n) {
+            if (!n || isNaN(n)) return '$0';
+            return '$' + Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 2 }).format(n);
+        }
+
+        function copyString(text, title) {
+            const el = document.createElement('input');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            notifyToast(title, text, 'electric');
+        }
+
+        function notifyToast(title, desc, accent = 'electric') {
+            const stack = document.getElementById('toast-container');
+            const card = document.createElement('div');
+            const border = accent === 'amber' ? 'border-amber' : 'border-electric';
+            card.className = `pointer-events-auto swiss-panel border-l-2 ${border} rounded-lg p-3.5 shadow-2xl max-w-xs transition-opacity duration-300`;
+            card.innerHTML = `
+                <div class="font-mono font-bold text-xs text-white">${title}</div>
+                <div class="text-[11px] text-slate-300 mt-0.5 truncate">${desc}</div>
+            `;
+            stack.appendChild(card);
+            setTimeout(() => {
+                card.style.opacity = '0';
+                setTimeout(() => card.remove(), 300);
+            }, 3400);
+        }
+
+        function toggleMobileNav() {
+            document.getElementById('mobile-nav-drawer').classList.toggle('hidden');
+        }
+
+        function startSyncClock() {
+            setInterval(() => {
+                syncTimer--;
+                if (syncTimer <= 0) {
+                    syncTimer = 45;
+                    forceGlobalSync(true);
+                }
+                const el = document.getElementById('sync-countdown');
+                if (el) el.textContent = `${syncTimer}s`;
+            }, 1000);
+        }
+
+        function forceGlobalSync(silent = false) {
+            syncTimer = 45;
+            const icon = document.getElementById('global-sync-icon');
+            if (icon) icon.classList.add('animate-spin');
+
+            loadGlobalMarkets();
+            loadNewsForSymbol(activeSymbol, false);
+
+            setTimeout(() => {
+                if (icon) icon.classList.remove('animate-spin');
+                if (!silent) notifyToast('Oráculos Sincronizados', 'Precios multi-chain y cable de noticias actualizados.', 'electric');
+            }, 700);
+        }
+    </script>
+</body>
+</html>
